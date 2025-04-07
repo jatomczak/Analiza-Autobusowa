@@ -340,8 +340,7 @@ int main()
             if (stopsGroup[i].groupActiveFlag)                                  
             {                                                                   
                 stopsGroup[i].ConsiderDeactivation(stopsTime[z]);               
-                wallet += stopsGroup[i].groupCost; // if group is active cost is
- 0                                                                              
+                wallet += stopsGroup[i].groupCost; // if group is active cost is 0                                                                              
                 wallet %= MAXIMUM_NUMBER;                                       
             }                                                                   
         }                                                                       
