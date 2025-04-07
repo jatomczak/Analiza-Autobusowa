@@ -116,14 +116,11 @@ void StopsGroup::CloseThisGroup()
                                                                                 
 void StopsGroup::CalculateGroupCost()                                           
 {                                                                               
-    for (list<StopsSubgroup*>::iterator iter = listOfSubgroups.begin(); iter != 
-listOfSubgroups.end(); ++iter)                                                  
+    for (list<StopsSubgroup*>::iterator iter = listOfSubgroups.begin(); iter != listOfSubgroups.end(); ++iter)                                                  
     {                                                                           
-        this->groupCost += this->repetitionsNumberWhenCreate * (*iter)->subgroup
-Cost;                                                                           
+        this->groupCost += this->repetitionsNumberWhenCreate * (*iter)->subgroupCost;                                                                           
     }                                                                           
-    this->groupCost += this->repetitionsNumberWhenCreate * pow(2, this->elements
-NumberUnder20) * 2;                                                             
+    this->groupCost += this->repetitionsNumberWhenCreate * pow(2, this->elementsNumberUnder20) * 2;                                                             
 }                                                                               
                                                                                 
 void StopsGroup::SetFirstElementOver20(int currentStopTime)                     
@@ -136,8 +133,7 @@ void StopsGroup::SetFirstElementOver20(int currentStopTime)
                                                                                 
 void StopsGroup::PrintListOfElements()                                          
 {                                                                               
-    for (std::list<int>::iterator iter = this->listOfElements.begin(); iter != t
-his->listOfElements.end(); ++iter)                                              
+    for (std::list<int>::iterator iter = this->listOfElements.begin(); iter != this->listOfElements.end(); ++iter)                                              
     {                                                                           
         std::cout << *iter << "\t";                                             
     }                                                                           
@@ -151,8 +147,7 @@ void StopsGroup::CreateNewSubGroup(int currentStopTime)
                                                                                 
 void StopsGroup::ExtendExistingSubgroups(int currentStopTime)                   
 {                                                                               
-    for (std::list<StopsSubgroup*>::iterator iter = this->listOfSubgroups.begin(
-); iter != this->listOfSubgroups.end(); ++iter)                                 
+    for (std::list<StopsSubgroup*>::iterator iter = this->listOfSubgroups.begin(); iter != this->listOfSubgroups.end(); ++iter)                                 
     {                                                                           
         (*iter)->AddNewStop(currentStopTime);                                   
     }                                                                           
@@ -162,11 +157,9 @@ void StopsGroup::PrintListOfSubgroups()
 {                                                                               
     if (this->listOfSubgroups.size() > 0)                                       
     {                                                                           
-        for (std::list<StopsSubgroup*>::iterator iter = this->listOfSubgroups.be
-gin(); iter != this->listOfSubgroups.end(); ++iter)                             
+        for (std::list<StopsSubgroup*>::iterator iter = this->listOfSubgroups.begin(); iter != this->listOfSubgroups.end(); ++iter)                             
         {                                                                       
-            std::cout << "podgrupa - liczba podgrup: " << this->listOfSubgroups.
-size() << "\n";                                                                 
+            std::cout << "podgrupa - liczba podgrup: " << this->listOfSubgroups.size() << "\n";                                                                 
             (*iter)->PrintListOfElements();                                     
         }                                                                       
     }                                                                           
@@ -181,30 +174,23 @@ void StopsGroup::MakeSummaryOfSubgroups()
     if (numberOfSubgroups > 0)                                                  
     {                                                                           
         subgroupLevelCounter++;                                                 
-        for (list<StopsSubgroup*>::iterator iter = listOfSubgroups.begin(); iter
- != listOfSubgroups.end(); ++iter)                                              
+        for (list<StopsSubgroup*>::iterator iter = listOfSubgroups.begin(); iter != listOfSubgroups.end(); ++iter)                                              
         {                                                                       
             summaryOfSubgroups.push_back((*iter)->numberOfElements);            
-            numberOfSubgroupVariants = groupVariants * pow(2, (*iter)->numberOfE
-lements);                                                                       
+            numberOfSubgroupVariants = groupVariants * pow(2, (*iter)->numberOfElements);                                                                       
             if ((*iter)->numberOfSubgroup > 0)                                  
             {                                                                   
                 subgroupLevelCounter++;                                         
-                (*iter)->MakeSummaryOfSubgroups(subgroupLevelCounter, numberOfSu
-bgroupVariants);                                                                
+                (*iter)->MakeSummaryOfSubgroups(subgroupLevelCounter, numberOfSubgroupVariants);                                                                
                 subgroupLevelCounter--;                                         
-                localGroupCost = (*iter)->CalcualteGroupCost(subgroupLevelCounte
-r);                                                                             
-                (*iter)->subgroupCost += localGroupCost * numberOfSubgroupVarian
-ts;                                                                             
+                localGroupCost = (*iter)->CalcualteGroupCost(subgroupLevelCounter);                                                                             
+                (*iter)->subgroupCost += localGroupCost * numberOfSubgroupVariants;                                                                             
                                                                                 
             }                                                                   
             else                                                                
             {                                                                   
-                localGroupCost = (*iter)->CalcualteGroupCost(subgroupLevelCounte
-r);                                                                             
-                (*iter)->subgroupCost += numberOfSubgroupVariants * localGroupCo
-st;                                                                             
+                localGroupCost = (*iter)->CalcualteGroupCost(subgroupLevelCounter);                                                                             
+                (*iter)->subgroupCost += numberOfSubgroupVariants * localGroupCost;                                                                             
             }                                                                   
         }                                                                       
         subgroupLevelCounter--;                                                 
@@ -240,8 +226,7 @@ void StopsSubgroup::AddNewStop(int currentStopTime)
 void StopsSubgroup::PrintListOfElements()                                       
 {                                                                               
     std::cout << this->timeOfFirstStop << "\t";                                 
-    for (std::list<int>::iterator iter = this->listOfElements.begin(); iter != t
-his->listOfElements.end(); ++iter)                                              
+    for (std::list<int>::iterator iter = this->listOfElements.begin(); iter != this->listOfElements.end(); ++iter)                                              
     {                                                                           
         std::cout << *iter << " ";                                              
     }                                                                           
@@ -251,8 +236,7 @@ his->listOfElements.end(); ++iter)
                                                                                 
 void StopsSubgroup::ExtendExistingSubgroups(int currentStopTime)                
 {                                                                               
-    for (std::list<StopsSubgroup*>::iterator iter = this->listOfSubgroups.begin(
-); iter != this->listOfSubgroups.end(); ++iter)                                 
+    for (std::list<StopsSubgroup*>::iterator iter = this->listOfSubgroups.begin(); iter != this->listOfSubgroups.end(); ++iter)                                 
     {                                                                           
         (*iter)->AddNewStop(currentStopTime);                                   
     }                                                                           
@@ -267,39 +251,32 @@ void StopsSubgroup::PrintListOfSubgroups()
 {                                                                               
     if (this->listOfSubgroups.size() > 0)                                       
     {                                                                           
-        std::cout << "kolejne podgrupy - liczba podgrup - " << this->listOfSubgr
-oups.size() << "\n";                                                            
-        for (std::list<StopsSubgroup*>::iterator iter = this->listOfSubgroups.be
-gin(); iter != this->listOfSubgroups.end(); ++iter)                             
+        std::cout << "kolejne podgrupy - liczba podgrup - " << this->listOfSubgroups.size() << "\n";                                                            
+        for (std::list<StopsSubgroup*>::iterator iter = this->listOfSubgroups.begin(); iter != this->listOfSubgroups.end(); ++iter)                             
         {                                                                       
             (*iter)->PrintListOfElements();                                     
         }                                                                       
     }                                                                           
 }                                                                               
                                                                                 
-void StopsSubgroup::MakeSummaryOfSubgroups(int subgroupLevelCounter, int variabl
-eBits)                                                                          
+void StopsSubgroup::MakeSummaryOfSubgroups(int subgroupLevelCounter, int variableBits)                                                                          
 {                                                                               
     int groupCost = 0;                                                          
-    for (std::list<StopsSubgroup*>::iterator iter = this->listOfSubgroups.begin(
-); iter != this->listOfSubgroups.end(); ++iter)                                 
+    for (std::list<StopsSubgroup*>::iterator iter = this->listOfSubgroups.begin(); iter != this->listOfSubgroups.end(); ++iter)                                 
     {                                                                           
         if ((*iter)->numberOfSubgroup > 0)                                      
         {                                                                       
             subgroupLevelCounter++;                                             
-            (*iter)->MakeSummaryOfSubgroups(subgroupLevelCounter, variableBits *
- pow(2, (*iter)->numberOfElements));                                            
+            (*iter)->MakeSummaryOfSubgroups(subgroupLevelCounter, variableBits * pow(2, (*iter)->numberOfElements));                                            
             subgroupLevelCounter--;                                             
             groupCost = this->CalcualteGroupCost(subgroupLevelCounter);         
-            (*iter)->subgroupCost += variableBits * pow(2, (*iter)->numberOfElem
-ents) * groupCost;                                                              
+            (*iter)->subgroupCost += variableBits * pow(2, (*iter)->numberOfElements) * groupCost;                                                              
             this->subgroupCost += (*iter)->subgroupCost;                        
         }                                                                       
         else                                                                    
         {                                                                       
             groupCost = this->CalcualteGroupCost(subgroupLevelCounter);         
-            this->subgroupCost += variableBits * pow(2, (*iter)->numberOfElement
-s) * groupCost;                                                                 
+            this->subgroupCost += variableBits * pow(2, (*iter)->numberOfElements) * groupCost;                                                                 
         }                                                                       
     }                                                                           
 }                                                                               
